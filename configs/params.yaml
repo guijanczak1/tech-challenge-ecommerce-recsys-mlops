@@ -1,0 +1,32 @@
+# Hiperparâmetros e caminhos — lido por src/recsys/config.py (Pydantic Settings).
+# RetailRocket: eventos view/addtocart/transaction, visitorid x itemid, timestamp.
+
+seed: 42
+
+data:
+  raw_dir: data/raw
+  processed_dir: data/processed
+  events_file: events.csv
+  user_col: visitorid
+  item_col: itemid
+  event_col: event
+  timestamp_col: timestamp
+  min_interactions: 5     # filtro: descarta users/items com menos interações
+  test_size: 0.2
+
+model:
+  name: mlp               # chave da Factory (models/factory.py)
+  embedding_dim: 64
+  hidden_dims: [128, 64]
+  dropout: 0.2
+
+training:
+  epochs: 20
+  batch_size: 1024
+  learning_rate: 0.001
+  patience: 3             # early stopping
+  device: auto           # auto -> cuda se disponível, senão cpu
+
+evaluation:
+  k: 10
+  metrics: [precision_at_k, recall_at_k, ndcg_at_k, map_at_k]
