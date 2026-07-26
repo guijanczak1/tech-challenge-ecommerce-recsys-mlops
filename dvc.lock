@@ -1,0 +1,122 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python -m recsys.pipeline.prepare
+    deps:
+    - path: configs/params.yaml
+      hash: md5
+      md5: 099bb625495aa7e11fbc909b0b36ec3f
+      size: 971
+    - path: src/recsys/data/loaders.py
+      hash: md5
+      md5: 60f7305072705fe4c5e1c6bdf48469b1
+      size: 1494
+    - path: src/recsys/data/synthetic.py
+      hash: md5
+      md5: 289ea6ecd72b3fbdf03cb085935da9fc
+      size: 2018
+    - path: src/recsys/pipeline/prepare.py
+      hash: md5
+      md5: 9cf4059fbc2d9a3c563da5af8c806240
+      size: 574
+    outs:
+    - path: data/raw/events.csv
+      hash: md5
+      md5: 08985fa158f2c6aca5d7743f01e94ddb
+      size: 877727
+  preprocess:
+    cmd: python -m recsys.pipeline.preprocess
+    deps:
+    - path: configs/params.yaml
+      hash: md5
+      md5: 099bb625495aa7e11fbc909b0b36ec3f
+      size: 971
+    - path: data/raw/events.csv
+      hash: md5
+      md5: 08985fa158f2c6aca5d7743f01e94ddb
+      size: 877727
+    - path: src/recsys/data/preprocessors.py
+      hash: md5
+      md5: 6e321388fc26f4d1b4fcad22aaaf441b
+      size: 4289
+    - path: src/recsys/pipeline/preprocess.py
+      hash: md5
+      md5: 25726fef0bc34997ff143c5cb30221d8
+      size: 1508
+    outs:
+    - path: data/processed/interactions.parquet
+      hash: md5
+      md5: 6dda976822c59dd889b2d9d23ab6004c
+      size: 336139
+  feature_eng:
+    cmd: python -m recsys.pipeline.feature_eng
+    deps:
+    - path: configs/params.yaml
+      hash: md5
+      md5: 099bb625495aa7e11fbc909b0b36ec3f
+      size: 971
+    - path: data/processed/interactions.parquet
+      hash: md5
+      md5: 6dda976822c59dd889b2d9d23ab6004c
+      size: 336139
+    - path: src/recsys/pipeline/feature_eng.py
+      hash: md5
+      md5: b91f781707a68b57e8545ba57f238afd
+      size: 2027
+    outs:
+    - path: data/processed/test.parquet
+      hash: md5
+      md5: ca30fb164ce03ca61cce4f8a42c36abb
+      size: 78382
+    - path: data/processed/train.parquet
+      hash: md5
+      md5: 705c9288eb360315ef36103e6b910edd
+      size: 277387
+  train:
+    cmd: python -m recsys.pipeline.train
+    deps:
+    - path: data/processed/train.parquet
+      hash: md5
+      md5: 705c9288eb360315ef36103e6b910edd
+      size: 277387
+    - path: src/recsys/models/baselines.py
+      hash: md5
+      md5: 2d967f885f7238602808f766f90bbe45
+      size: 1312
+    - path: src/recsys/models/factory.py
+      hash: md5
+      md5: 171d4f56f91f42df3bb88075a7c6aeab
+      size: 1874
+    - path: src/recsys/pipeline/train.py
+      hash: md5
+      md5: 19f9e2282b67e034848a23368c4a189e
+      size: 1989
+    outs:
+    - path: models/baseline.joblib
+      hash: md5
+      md5: 8718d4e6289fa8dfd409e7fb135eaf76
+      size: 1326
+  evaluate:
+    cmd: python -m recsys.pipeline.evaluate
+    deps:
+    - path: data/processed/test.parquet
+      hash: md5
+      md5: ca30fb164ce03ca61cce4f8a42c36abb
+      size: 78382
+    - path: models/baseline.joblib
+      hash: md5
+      md5: 8718d4e6289fa8dfd409e7fb135eaf76
+      size: 1326
+    - path: src/recsys/evaluation/metrics.py
+      hash: md5
+      md5: 1633caed0c1ad81b18fdb9a81c967089
+      size: 868
+    - path: src/recsys/pipeline/evaluate.py
+      hash: md5
+      md5: 1fa9bf0c514e76f8ff0ec3167a232052
+      size: 2248
+    outs:
+    - path: metrics.json
+      hash: md5
+      md5: 3e2e22a19542b35fbe7c35e51b652236
+      size: 105
