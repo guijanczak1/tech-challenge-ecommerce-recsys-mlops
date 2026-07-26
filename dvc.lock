@@ -9,12 +9,12 @@ stages:
       size: 971
     - path: src/recsys/data/loaders.py
       hash: md5
-      md5: 60f7305072705fe4c5e1c6bdf48469b1
-      size: 1494
+      md5: a900526ab6122ec634afdd21170cbd8a
+      size: 1288
     - path: src/recsys/data/synthetic.py
       hash: md5
-      md5: 289ea6ecd72b3fbdf03cb085935da9fc
-      size: 2018
+      md5: 771583bbc33fa23f9219dc5d98748ea6
+      size: 1773
     - path: src/recsys/pipeline/prepare.py
       hash: md5
       md5: 9cf4059fbc2d9a3c563da5af8c806240
@@ -63,6 +63,10 @@ stages:
       hash: md5
       md5: b91f781707a68b57e8545ba57f238afd
       size: 2027
+    - path: src/recsys/pipeline/preprocess.py
+      hash: md5
+      md5: 25726fef0bc34997ff143c5cb30221d8
+      size: 1508
     outs:
     - path: data/processed/test.parquet
       hash: md5
@@ -75,6 +79,10 @@ stages:
   train:
     cmd: python -m recsys.pipeline.train
     deps:
+    - path: configs/params.yaml
+      hash: md5
+      md5: 099bb625495aa7e11fbc909b0b36ec3f
+      size: 971
     - path: data/processed/train.parquet
       hash: md5
       md5: 705c9288eb360315ef36103e6b910edd
@@ -87,6 +95,10 @@ stages:
       hash: md5
       md5: 171d4f56f91f42df3bb88075a7c6aeab
       size: 1874
+    - path: src/recsys/pipeline/feature_eng.py
+      hash: md5
+      md5: b91f781707a68b57e8545ba57f238afd
+      size: 2027
     - path: src/recsys/pipeline/train.py
       hash: md5
       md5: 19f9e2282b67e034848a23368c4a189e
@@ -99,6 +111,10 @@ stages:
   evaluate:
     cmd: python -m recsys.pipeline.evaluate
     deps:
+    - path: configs/params.yaml
+      hash: md5
+      md5: 099bb625495aa7e11fbc909b0b36ec3f
+      size: 971
     - path: data/processed/test.parquet
       hash: md5
       md5: ca30fb164ce03ca61cce4f8a42c36abb
@@ -115,6 +131,14 @@ stages:
       hash: md5
       md5: 1fa9bf0c514e76f8ff0ec3167a232052
       size: 2248
+    - path: src/recsys/pipeline/feature_eng.py
+      hash: md5
+      md5: b91f781707a68b57e8545ba57f238afd
+      size: 2027
+    - path: src/recsys/pipeline/train.py
+      hash: md5
+      md5: 19f9e2282b67e034848a23368c4a189e
+      size: 1989
     outs:
     - path: metrics.json
       hash: md5

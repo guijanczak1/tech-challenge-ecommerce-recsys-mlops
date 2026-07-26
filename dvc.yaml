@@ -24,6 +24,7 @@ stages:
     deps:
       - data/processed/interactions.parquet
       - src/recsys/pipeline/feature_eng.py
+      - src/recsys/pipeline/preprocess.py
       - configs/params.yaml
     outs:
       - data/processed/train.parquet
@@ -34,8 +35,10 @@ stages:
     deps:
       - data/processed/train.parquet
       - src/recsys/pipeline/train.py
+      - src/recsys/pipeline/feature_eng.py
       - src/recsys/models/baselines.py
       - src/recsys/models/factory.py
+      - configs/params.yaml
     outs:
       - models/baseline.joblib
 
@@ -45,7 +48,10 @@ stages:
       - models/baseline.joblib
       - data/processed/test.parquet
       - src/recsys/pipeline/evaluate.py
+      - src/recsys/pipeline/train.py
+      - src/recsys/pipeline/feature_eng.py
       - src/recsys/evaluation/metrics.py
+      - configs/params.yaml
     metrics:
       - metrics.json:
           cache: false
