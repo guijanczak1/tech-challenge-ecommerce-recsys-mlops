@@ -16,15 +16,7 @@ def raw_events_path(cfg: DataConfig) -> Path:
 
 
 def ensure_events(cfg: DataConfig, seed: int) -> Path:
-    """Garante o CSV de eventos: mantém o real se existir, senão gera sintético.
-
-    Args:
-        cfg: Configuração de dados (caminhos + parâmetros do sintético).
-        seed: Semente do gerador sintético.
-
-    Returns:
-        Caminho do CSV de eventos garantido em disco.
-    """
+    """Garante o CSV de eventos: mantém o real se existir, senão gera sintético."""
     path = raw_events_path(cfg)
     if path.exists():
         return path

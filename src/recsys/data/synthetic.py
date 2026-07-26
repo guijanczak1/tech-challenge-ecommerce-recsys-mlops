@@ -29,17 +29,7 @@ def _transaction_ids(events: np.ndarray, rng: np.random.Generator) -> np.ndarray
 
 
 def generate_events(n_users: int, n_items: int, n_events: int, seed: int) -> pd.DataFrame:
-    """Gera eventos user-item sintéticos, ordenados por tempo.
-
-    Args:
-        n_users: Número de visitantes distintos.
-        n_items: Número de itens distintos.
-        n_events: Número total de interações.
-        seed: Semente para reprodutibilidade.
-
-    Returns:
-        DataFrame com o schema do RetailRocket.
-    """
+    """Gera ``n_events`` eventos user-item (schema RetailRocket), ordenados por tempo."""
     rng = np.random.default_rng(seed)
     events = rng.choice(_EVENTS, size=n_events, p=_EVENT_PROBS)
     frame = pd.DataFrame(
