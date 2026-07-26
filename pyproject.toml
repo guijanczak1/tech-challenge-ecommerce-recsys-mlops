@@ -1,0 +1,29 @@
+[project]
+name = "recsys"
+version = "0.1.0"
+description = "Sistema de recomendação de produtos de e-commerce (Tech Challenge Fase 02)"
+requires-python = ">=3.12"
+# Dependências de runtime (pytorch, sklearn, mlflow, dvc) entram na Etapa 2 via Poetry.
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "D"]
+# D203/D213 conflitam com a convenção Google; desligados por recomendação do ruff.
+ignore = ["D203", "D213"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D"]          # docstrings não exigidas em testes
+"scripts/**" = ["D"]       # tooling auxiliar (mantém módulo documentado, sem D por função)
+"src/recsys/**/__init__.py" = ["D104"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-q"
