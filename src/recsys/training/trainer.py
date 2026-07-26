@@ -38,29 +38,26 @@ class BaseTrainer(ABC):
         self._epochs_no_improve = 0
 
     def fit(self, epochs: int) -> TrainingHistory:
-        """Executa o treino (Template Method).
-
-        Args:
-            epochs: Número máximo de épocas.
-
-        Returns:
-            O :class:`TrainingHistory` do treino.
-        """
+        """Executa o treino (Template Method) e retorna o histórico."""
         self.on_train_start()
         history = TrainingHistory()
         for epoch in range(1, epochs + 1):
-            train_loss = self.train_epoch()
-            val_loss = self.validate()
-            history.train_losses.append(train_loss)
-            history.val_losses.append(val_loss)
-            self.on_epoch_end(epoch, train_loss, val_loss)
-            if self._should_stop(val_loss, epoch):
+            if self._run_epoch(epoch, history):
                 history.stopped_early = True
                 break
         history.best_epoch = self._best_epoch
         history.best_val_loss = self._best_val
         self.on_train_end()
         return history
+
+    def _run_epoch(self, epoch: int, history: TrainingHistory) -> bool:
+        """Roda uma época, registra as perdas e indica se deve parar."""
+        train_loss = self.train_epoch()
+        val_loss = self.validate()
+        history.train_losses.append(train_loss)
+        history.val_losses.append(val_loss)
+        self.on_epoch_end(epoch, train_loss, val_loss)
+        return self._should_stop(val_loss, epoch)
 
     def _should_stop(self, val_loss: float, epoch: int) -> bool:
         """Atualiza o melhor resultado e decide se deve parar."""
