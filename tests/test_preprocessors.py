@@ -54,3 +54,10 @@ def test_pipeline_chains_steps_in_order() -> None:
 def test_concretes_satisfy_protocol() -> None:
     assert isinstance(LabelEncoderPreprocessor(["itemid"]), Preprocessor)
     assert isinstance(MinInteractionsFilter("visitorid", 2), Preprocessor)
+
+
+def test_pipeline_transform_uses_fitted_steps() -> None:
+    pipeline = PreprocessorPipeline(steps=[LabelEncoderPreprocessor(columns=["itemid"])])
+    pipeline.fit_transform(_events())  # ajusta os passos
+    out = pipeline.transform(_events())  # reaplica sem reajustar
+    assert set(out["itemid"]) == {0, 1, 2}
