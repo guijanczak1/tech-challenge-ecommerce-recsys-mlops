@@ -60,6 +60,7 @@ def test_invalid_test_size_raises() -> None:
             timestamp_col="t",
             min_interactions=5,
             test_size=1.5,  # inválido: deve estar em (0, 1)
+            synthetic={"n_users": 10, "n_items": 5, "n_events": 50},
         )
 
 
@@ -86,6 +87,7 @@ def _minimal_params_yaml(seed: int) -> str:
                 "timestamp_col": "timestamp",
                 "min_interactions": 5,
                 "test_size": 0.2,
+                "synthetic": {"n_users": 100, "n_items": 50, "n_events": 500},
             },
             "model": {
                 "name": "mlp",
