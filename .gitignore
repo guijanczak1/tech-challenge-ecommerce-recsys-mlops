@@ -20,6 +20,9 @@ htmlcov/
 
 # ML / dados / artefatos
 mlruns/
+mlartifacts/
+mlflow.db
+.dvcstore/
 .dvc/cache/
 data/raw/
 data/processed/

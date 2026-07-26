@@ -84,7 +84,7 @@ class EnvSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore", populate_by_name=True)
 
     params_file: Path = Field(default=Path("configs/params.yaml"), alias="RECSYS_PARAMS_FILE")
-    mlflow_tracking_uri: str = Field(default="./mlruns", alias="MLFLOW_TRACKING_URI")
+    mlflow_tracking_uri: str = Field(default="sqlite:///mlflow.db", alias="MLFLOW_TRACKING_URI")
     # Região AWS para o deploy (Etapa 4, bônus). Credenciais ficam no ambiente
     # e são lidas diretamente pelo boto3 — não são materializadas aqui.
     aws_region: str = Field(default="", alias="AWS_REGION")
