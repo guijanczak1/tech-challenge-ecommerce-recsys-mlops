@@ -47,7 +47,7 @@ convention = "google"
 "src/recsys/**/__init__.py" = ["D104"]
 
 [tool.pytest.ini_options]
-pythonpath = ["src"]
+pythonpath = ["src", "scripts"]
 testpaths = ["tests"]
 addopts = "-q"
 
