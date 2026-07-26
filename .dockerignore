@@ -14,6 +14,10 @@ state/
 data/
 models/
 mlruns/
+mlartifacts/
+mlflow.db
+.dvcstore/
+.dvc/cache/
 *.md
 .env
 .env.*
