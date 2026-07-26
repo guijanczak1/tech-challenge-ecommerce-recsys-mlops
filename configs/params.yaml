@@ -13,6 +13,10 @@ data:
   timestamp_col: timestamp
   min_interactions: 5     # filtro: descarta users/items com menos interações
   test_size: 0.2
+  synthetic:              # usado só quando data/raw/events.csv não existe
+    n_users: 2000
+    n_items: 500
+    n_events: 30000
 
 model:
   name: mlp               # chave da Factory (models/factory.py)

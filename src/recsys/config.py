@@ -15,6 +15,14 @@ from pydantic import BaseModel, ConfigDict, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+class SyntheticConfig(BaseModel):
+    """Parâmetros do gerador de dados sintéticos (fallback reprodutível)."""
+
+    n_users: int = Field(gt=0)
+    n_items: int = Field(gt=0)
+    n_events: int = Field(gt=0)
+
+
 class DataConfig(BaseModel):
     """Fonte e pré-processamento dos dados (RetailRocket)."""
 
@@ -27,6 +35,7 @@ class DataConfig(BaseModel):
     timestamp_col: str
     min_interactions: int = Field(ge=1)
     test_size: float = Field(gt=0.0, lt=1.0)
+    synthetic: SyntheticConfig
 
 
 class ModelConfig(BaseModel):
