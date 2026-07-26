@@ -72,9 +72,7 @@ class AppConfig(BaseModel):
 class EnvSettings(BaseSettings):
     """Valores vindos do ambiente / arquivo `.env`."""
 
-    model_config = SettingsConfigDict(
-        env_file=".env", extra="ignore", populate_by_name=True
-    )
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore", populate_by_name=True)
 
     params_file: Path = Field(default=Path("configs/params.yaml"), alias="RECSYS_PARAMS_FILE")
     mlflow_tracking_uri: str = Field(default="./mlruns", alias="MLFLOW_TRACKING_URI")
