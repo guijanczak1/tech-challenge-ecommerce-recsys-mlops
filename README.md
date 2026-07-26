@@ -2,26 +2,24 @@
 
 Tech Challenge — Pós ML FIAP (Fase 02). Sistema de **recomendação de produtos
 de e-commerce** com rede neural PyTorch, pipeline versionado (DVC), experimentos
-no MLflow e código clean code. Dataset: **RetailRocket**.
+no MLflow e código seguindo clean code. Dataset: **RetailRocket**.
 
-> Documento em evolução por etapa. Uso do modelo/serviço será detalhado na
-> Etapa 4. Processo e rúbrica: ver [`HARNESS.md`](HARNESS.md); regras de código:
-> [`CLAUDE.md`](CLAUDE.md).
+> Documento em evolução: o uso do modelo/serviço será detalhado ao longo das
+> etapas do projeto.
 
 ## Requisitos
 - **Python 3.12**
 - **Poetry** (gerenciamento de dependências)
 
-## Setup do ambiente (Etapa 2)
+## Setup do ambiente
 
 ```bash
 # 1. aponte o Poetry para um Python 3.12 e instale tudo
 poetry env use python3.12
 poetry install
 
-# 2. instale os hooks de qualidade (ruff) e de commit semântico
+# 2. instale os hooks de qualidade (ruff)
 poetry run pre-commit install
-poetry run pre-commit install --hook-type commit-msg
 
 # 3. configure variáveis de ambiente
 cp .env.example .env        # (Windows: copy .env.example .env)
@@ -33,14 +31,13 @@ poetry run python scripts/validate_env.py
 ## Comandos úteis
 
 ```bash
-poetry run pytest -q                                          # testes
+poetry run pytest -q                                          # testes + cobertura
 poetry run ruff check . && poetry run ruff format --check .   # lint + formato
-poetry run python scripts/audit_rubric.py --etapa 2           # auditoria da rúbrica
 ```
 
 ## Estrutura
 `src/recsys/` (config, data, models, training, evaluation, utils) ·
-`tests/` · `configs/params.yaml` · `scripts/` · `docs/plano_commits.md`.
+`tests/` · `configs/params.yaml` · `scripts/validate_env.py`.
 
 ## Entregas
 - Obrigatória: repositório + **vídeo STAR de 5 min**.

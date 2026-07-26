@@ -18,9 +18,6 @@ dist/
 .coverage
 htmlcov/
 
-# Estado do harness
-state/
-
 # ML / dados / artefatos
 mlruns/
 .dvc/cache/
