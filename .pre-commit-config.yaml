@@ -1,0 +1,17 @@
+# Pre-commit: ruff (lint+format) + validação de commit semântico.
+# Instale com: pre-commit install && pre-commit install --hook-type commit-msg
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: local
+    hooks:
+      - id: semantic-commit-msg
+        name: valida commit semântico
+        entry: python scripts/hooks/check_commit_msg.py
+        language: system
+        stages: [commit-msg]
