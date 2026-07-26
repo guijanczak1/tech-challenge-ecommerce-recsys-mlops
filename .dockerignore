@@ -1,0 +1,20 @@
+# Contexto de build enxuto (Etapa 3 usa isto no Dockerfile multi-stage).
+.git
+.gitignore
+.venv
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+tests/
+docs/
+input/
+state/
+data/
+models/
+mlruns/
+*.md
+.env
+.env.*
+!.env.example
