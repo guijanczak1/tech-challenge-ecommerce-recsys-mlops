@@ -25,16 +25,8 @@ def production_model() -> Recommender:
     return mlflow.pytorch.load_model(f"models:/{REGISTERED_MODEL}@production")
 
 
-def create_app(provider: Callable[[], Recommender] = production_model) -> FastAPI:
-    """Cria a app FastAPI; o modelo é carregado no startup via ``provider``."""
-
-    @asynccontextmanager
-    async def lifespan(app: FastAPI):  # noqa: ANN202
-        """Carrega o modelo uma vez no ciclo de vida da aplicação."""
-        app.state.model = provider()
-        yield
-
-    app = FastAPI(title="recsys-api", lifespan=lifespan)
+def _register_routes(app: FastAPI) -> None:
+    """Registra os endpoints ``/health`` e ``/recommend`` na app."""
 
     @app.get("/health")
     def health() -> dict[str, str]:
@@ -47,6 +39,18 @@ def create_app(provider: Callable[[], Recommender] = production_model) -> FastAP
         items = app.state.model.recommend(user, k)
         return {"user": user, "k": k, "items": items}
 
+
+def create_app(provider: Callable[[], Recommender] = production_model) -> FastAPI:
+    """Cria a app FastAPI; o modelo é carregado no startup via ``provider``."""
+
+    @asynccontextmanager
+    async def lifespan(app: FastAPI):  # noqa: ANN202
+        """Carrega o modelo uma vez no ciclo de vida da aplicação."""
+        app.state.model = provider()
+        yield
+
+    app = FastAPI(title="recsys-api", lifespan=lifespan)
+    _register_routes(app)
     return app
 
 
