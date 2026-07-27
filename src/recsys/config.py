@@ -65,6 +65,7 @@ class EvaluationConfig(BaseModel):
 
     k: int = Field(gt=0)
     metrics: list[str]
+    min_ndcg: float = Field(default=0.1, ge=0.0)  # gate p/ promover a Production
 
 
 class AppConfig(BaseModel):

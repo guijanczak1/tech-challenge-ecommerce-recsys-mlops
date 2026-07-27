@@ -35,3 +35,4 @@ training:
 evaluation:
   k: 10
   metrics: [precision_at_k, recall_at_k, ndcg_at_k, map_at_k]
+  min_ndcg: 0.1          # NDCG@k mínimo para promover o modelo a Production
