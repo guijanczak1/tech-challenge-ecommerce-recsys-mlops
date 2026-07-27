@@ -34,9 +34,7 @@ def ndcg_at_k(recommended: Sequence[int], relevant: set[int], k: int) -> float:
     if not relevant:
         return 0.0
     dcg = sum(
-        1.0 / math.log2(rank + 2)
-        for rank, item in enumerate(recommended[:k])
-        if item in relevant
+        1.0 / math.log2(rank + 2) for rank, item in enumerate(recommended[:k]) if item in relevant
     )
     ideal = sum(1.0 / math.log2(rank + 2) for rank in range(min(k, len(relevant))))
     return dcg / ideal if ideal > 0 else 0.0
