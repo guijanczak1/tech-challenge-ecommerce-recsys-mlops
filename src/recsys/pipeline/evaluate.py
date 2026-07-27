@@ -1,9 +1,9 @@
 """Estágio ``evaluate``: compara o MLP com os baselines e promove o vencedor.
 
 Calcula 4 métricas (precision@k, recall@k, NDCG@k, MAP@k) para o MLP e para os
-baselines (popularity, SVD), registra tudo no MLflow e, se o MLP superar os
-baselines na métrica primária, promove a versão de ``staging`` para
-``production`` no Model Registry.
+baselines (popularity, SVD) e registra tudo no MLflow. Se o MLP atinge o NDCG@k
+mínimo configurado, promove a versão de ``staging`` para ``production`` no Model
+Registry. A comparação com os baselines é reportada em ``metrics.json``.
 """
 
 from __future__ import annotations
@@ -71,7 +71,7 @@ def load_mlp(cfg: AppConfig, dims: tuple[int, int], checkpoint: Path) -> RecsysM
     model = RecsysMLP(
         n_users, n_items, cfg.model.embedding_dim, cfg.model.hidden_dims, cfg.model.dropout
     )
-    model.load_state_dict(torch.load(checkpoint))
+    model.load_state_dict(torch.load(checkpoint, weights_only=True))
     model.eval()
     return model
 

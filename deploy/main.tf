@@ -37,10 +37,31 @@ resource "aws_ecr_repository" "recsys_api" {
   force_delete         = true
 }
 
+# Role que autoriza o App Runner a puxar a imagem do ECR privado.
+resource "aws_iam_role" "apprunner_ecr" {
+  name = "recsys-apprunner-ecr"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action    = "sts:AssumeRole"
+      Effect    = "Allow"
+      Principal = { Service = "build.apprunner.amazonaws.com" }
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "apprunner_ecr" {
+  role       = aws_iam_role.apprunner_ecr.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSAppRunnerServicePolicyForECRAccess"
+}
+
 resource "aws_apprunner_service" "recsys_api" {
   service_name = "recsys-api"
 
   source_configuration {
+    authentication_configuration {
+      access_role_arn = aws_iam_role.apprunner_ecr.arn
+    }
     image_repository {
       image_identifier      = var.image_uri
       image_repository_type = "ECR"

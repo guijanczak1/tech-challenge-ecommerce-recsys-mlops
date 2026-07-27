@@ -51,8 +51,9 @@ class RecsysMLP(nn.Module):
 
     @torch.no_grad()
     def recommend(self, user: int, k: int) -> list[int]:
-        """Top-k itens de maior score para ``user``."""
-        users = torch.full((self.n_items,), user, dtype=torch.long)
-        items = torch.arange(self.n_items, dtype=torch.long)
+        """Top-k itens de maior score para ``user`` (device-agnostic)."""
+        device = next(self.parameters()).device
+        users = torch.full((self.n_items,), user, dtype=torch.long, device=device)
+        items = torch.arange(self.n_items, dtype=torch.long, device=device)
         scores = self.forward(users, items)
         return torch.topk(scores, min(k, self.n_items)).indices.tolist()

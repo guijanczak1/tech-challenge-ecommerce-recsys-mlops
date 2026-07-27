@@ -73,7 +73,7 @@ def train_model(cfg: AppConfig, dims: tuple[int, int], checkpoint: Path) -> Trai
     history = RecsysTrainer(model, train_loader, val_loader, cfg, checkpoint).fit(
         cfg.training.epochs
     )
-    model.load_state_dict(torch.load(checkpoint))
+    model.load_state_dict(torch.load(checkpoint, weights_only=True))
     return _register(model, history)
 
 
