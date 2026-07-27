@@ -29,27 +29,34 @@ stages:
     outs:
       - data/processed/train.parquet
       - data/processed/test.parquet
+      - data/processed/dims.json
 
   train:
     cmd: python -m recsys.pipeline.train
     deps:
       - data/processed/train.parquet
+      - data/processed/dims.json
       - src/recsys/pipeline/train.py
-      - src/recsys/pipeline/feature_eng.py
-      - src/recsys/models/baselines.py
+      - src/recsys/models/mlp.py
       - src/recsys/models/factory.py
+      - src/recsys/data/dataset.py
+      - src/recsys/training/recsys_trainer.py
+      - src/recsys/training/trainer.py
       - configs/params.yaml
     outs:
-      - models/baseline.joblib
+      - models/mlp.pt
 
   evaluate:
     cmd: python -m recsys.pipeline.evaluate
     deps:
-      - models/baseline.joblib
+      - models/mlp.pt
+      - data/processed/train.parquet
       - data/processed/test.parquet
+      - data/processed/dims.json
       - src/recsys/pipeline/evaluate.py
       - src/recsys/pipeline/train.py
-      - src/recsys/pipeline/feature_eng.py
+      - src/recsys/models/mlp.py
+      - src/recsys/models/baselines.py
       - src/recsys/evaluation/metrics.py
       - configs/params.yaml
     metrics:
