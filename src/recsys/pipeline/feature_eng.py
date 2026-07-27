@@ -6,6 +6,7 @@ separa treino/teste por tempo (os eventos mais recentes viram teste).
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pandas as pd
@@ -15,7 +16,18 @@ from recsys.pipeline.preprocess import INTERACTIONS_FILE
 
 TRAIN_FILE = "train.parquet"
 TEST_FILE = "test.parquet"
+DIMS_FILE = "dims.json"
 _EVENT_WEIGHTS = {"view": 1.0, "addtocart": 2.0, "transaction": 3.0}
+
+
+def write_dims(df: pd.DataFrame, cfg: AppConfig, path: Path) -> dict[str, int]:
+    """Grava e retorna as dimensões (n_users, n_items) do espaço codificado."""
+    dims = {
+        "n_users": int(df[cfg.data.user_col].max()) + 1,
+        "n_items": int(df[cfg.data.item_col].max()) + 1,
+    }
+    path.write_text(json.dumps(dims, indent=2), encoding="utf-8")
+    return dims
 
 
 def add_weight(df: pd.DataFrame, event_col: str) -> pd.DataFrame:
@@ -45,6 +57,7 @@ def run(cfg: AppConfig) -> tuple[Path, Path]:
     train_path, test_path = processed_dir / TRAIN_FILE, processed_dir / TEST_FILE
     train.to_parquet(train_path, index=False)
     test.to_parquet(test_path, index=False)
+    write_dims(weighted, cfg, processed_dir / DIMS_FILE)
     return train_path, test_path
 
 
