@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI
@@ -16,6 +17,7 @@ from fastapi import FastAPI
 from recsys.models.base import Recommender
 
 REGISTERED_MODEL = "recsys-mlp"
+_LOCAL_MODEL_PATH = Path("models/mlp.pt")
 
 
 def production_model() -> Recommender:
@@ -23,6 +25,15 @@ def production_model() -> Recommender:
     import mlflow.pytorch
 
     return mlflow.pytorch.load_model(f"models:/{REGISTERED_MODEL}@production")
+
+
+def default_provider() -> Recommender:
+    """Usa o modelo embutido (imagem self-contained) se existir; senão, o Registry."""
+    if _LOCAL_MODEL_PATH.exists():
+        from recsys.serving.loader import load_local_model
+
+        return load_local_model()
+    return production_model()
 
 
 def _register_routes(app: FastAPI) -> None:
@@ -40,7 +51,7 @@ def _register_routes(app: FastAPI) -> None:
         return {"user": user, "k": k, "items": items}
 
 
-def create_app(provider: Callable[[], Recommender] = production_model) -> FastAPI:
+def create_app(provider: Callable[[], Recommender] = default_provider) -> FastAPI:
     """Cria a app FastAPI; o modelo é carregado no startup via ``provider``."""
 
     @asynccontextmanager

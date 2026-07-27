@@ -18,7 +18,11 @@ COPY --from=builder /app/.venv /app/.venv
 COPY --from=builder /app/src ./src
 COPY --from=builder /app/configs ./configs
 
-# O modelo é carregado no startup do MLflow Registry (models:/recsys-mlp@production);
-# defina MLFLOW_TRACKING_URI para um backend acessível pelo container no deploy.
+# Modelo embutido (imagem self-contained): a API carrega models/mlp.pt local
+# no startup, sem depender de um servidor MLflow. Gere os artefatos com
+# `dvc repro` antes do build. (Ver Dockerfile.serve.dockerignore.)
+COPY models/mlp.pt ./models/mlp.pt
+COPY data/processed/dims.json ./data/processed/dims.json
+
 EXPOSE 8080
 CMD ["uvicorn", "recsys.serving.api:app", "--host", "0.0.0.0", "--port", "8080"]

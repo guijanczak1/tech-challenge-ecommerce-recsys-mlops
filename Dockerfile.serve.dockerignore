@@ -1,0 +1,34 @@
+# Contexto de build da imagem de serving. Diferente do .dockerignore de treino:
+# aqui os artefatos do modelo (models/mlp.pt e data/processed/dims.json) SÃO
+# incluídos para embutir o modelo na imagem (serving self-contained).
+.git
+.gitignore
+.venv
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+tests/
+docs/
+input/
+state/
+mlruns/
+mlartifacts/
+mlflow.db
+.dvcstore/
+.dvc/
+deploy/
+*.md
+.env
+.env.*
+!.env.example
+
+# Dados: exclui tudo, exceto as dimensões necessárias ao serving.
+data/raw/
+data/processed/*
+!data/processed/dims.json
+
+# Modelos: exclui tudo, exceto o checkpoint servido.
+models/*
+!models/mlp.pt

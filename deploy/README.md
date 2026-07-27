@@ -5,13 +5,17 @@ por URL pública. Requer credenciais AWS (modo híbrido — fornecidas pelo usu�
 
 ## Pré-requisitos
 - AWS CLI autenticado, Docker e Terraform instalados.
-- Um backend MLflow acessível pelo container (para carregar
-  `models:/recsys-mlp@production`).
+- Artefatos do modelo gerados (`poetry run dvc repro`): a imagem **embute**
+  `models/mlp.pt` + `data/processed/dims.json` (serving self-contained, sem
+  depender de servidor MLflow na nuvem).
 
 ## Passos
 
 ```bash
-# 1. Build da imagem de serving
+# 0. Garanta os artefatos do modelo (embutidos na imagem)
+poetry run dvc repro          # gera models/mlp.pt e data/processed/dims.json
+
+# 1. Build da imagem de serving (usa Dockerfile.serve.dockerignore)
 docker build -f Dockerfile.serve -t recsys-api:latest .
 
 # 2. Criar o repositório ECR (via Terraform) e obter a URI
@@ -34,8 +38,9 @@ terraform apply \
 # 5. A URL pública sai em `terraform output service_url`
 ```
 
-## O que o harness precisa de você (modo híbrido)
-- Região AWS, `account_id` e credenciais (via ambiente/`aws configure`).
-- Definição do backend MLflow acessível pelo container (RDS+S3, ou imagem com
-  o modelo embutido — a decidir).
-- Segredos **nunca** são versionados; use variáveis de ambiente / AWS Secrets.
+## O que é necessário de você (modo híbrido)
+- Região AWS, `account_id` e credenciais (via `aws configure` / variáveis de
+  ambiente — **nunca** coladas em texto/commitadas).
+- O modelo vai **embutido** na imagem, então não é preciso um backend MLflow na
+  nuvem. `var.mlflow_tracking_uri` pode ser um valor placeholder.
+- Segredos só via ambiente / AWS Secrets Manager.
