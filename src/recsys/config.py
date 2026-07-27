@@ -57,6 +57,7 @@ class TrainingConfig(BaseModel):
     learning_rate: float = Field(gt=0.0)
     patience: int = Field(ge=1)
     device: Literal["auto", "cpu", "cuda"] = "auto"
+    negatives_per_positive: int = Field(default=4, ge=1)
 
 
 class EvaluationConfig(BaseModel):

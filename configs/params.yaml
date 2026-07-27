@@ -30,6 +30,7 @@ training:
   learning_rate: 0.001
   patience: 3             # early stopping
   device: auto           # auto -> cuda se disponível, senão cpu
+  negatives_per_positive: 4   # amostragem de negativos (feedback implícito)
 
 evaluation:
   k: 10
