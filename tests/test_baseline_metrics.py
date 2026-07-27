@@ -3,8 +3,14 @@
 from __future__ import annotations
 
 import pandas as pd
+import pytest
 
-from recsys.evaluation.metrics import precision_at_k, recall_at_k
+from recsys.evaluation.metrics import (
+    average_precision_at_k,
+    ndcg_at_k,
+    precision_at_k,
+    recall_at_k,
+)
 from recsys.models.baselines import PopularityRecommender
 from recsys.models.factory import create_model
 
@@ -37,3 +43,17 @@ def test_recall_at_k() -> None:
     relevant = {20, 40, 99}
     assert recall_at_k(recommended, relevant, k=4) == 2 / 3  # achou 2 de 3
     assert recall_at_k(recommended, set(), k=4) == 0.0
+
+
+def test_ndcg_at_k() -> None:
+    recommended = [10, 20, 30, 40]
+    relevant = {20, 40}  # posições 2 e 4
+    assert ndcg_at_k(recommended, relevant, k=4) == pytest.approx(0.6509, abs=1e-3)
+    assert ndcg_at_k(recommended, set(), k=4) == 0.0
+
+
+def test_average_precision_at_k() -> None:
+    recommended = [10, 20, 30, 40]
+    relevant = {20, 40}  # precisão em 1/2 e 2/4 -> AP = (0.5 + 0.5) / 2
+    assert average_precision_at_k(recommended, relevant, k=4) == pytest.approx(0.5)
+    assert average_precision_at_k(recommended, set(), k=4) == 0.0
