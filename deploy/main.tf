@@ -75,8 +75,8 @@ resource "aws_lambda_function" "recsys_api" {
   role          = aws_iam_role.lambda_exec.arn
   package_type  = "Image"
   image_uri     = var.image_uri
-  timeout       = 30    # cobre o cold start (import do torch + carga do modelo)
-  memory_size   = 1536  # folga para o torch; ainda bem dentro do free tier
+  timeout       = 90    # cold start real (import do torch) mediu >30s; folga generosa
+  memory_size   = 2048  # mais CPU proporcional também acelera o import do torch
 
   depends_on = [aws_ecr_repository_policy.lambda_pull]
 }
@@ -93,6 +93,33 @@ resource "aws_lambda_permission" "public_invoke" {
   function_name          = aws_lambda_function.recsys_api.function_name
   principal              = "*"
   function_url_auth_type = "NONE"
+}
+
+# Desde out/2025 a AWS também exige lambda:InvokeFunction (com a condição
+# lambda:InvokedViaFunctionUrl) para acesso público via Function URL — sem ela
+# a URL responde 403 mesmo com authorization_type=NONE e a permissão acima.
+# O provider ainda não expõe essa condição como argumento nativo em
+# aws_lambda_permission (issue aberta: hashicorp/terraform-provider-aws#44829),
+# então é criada via `aws lambda add-permission`. O `|| exit 0` torna reaplicações
+# seguras (ResourceConflictException se a statement já existir).
+resource "null_resource" "invoke_function_permission" {
+  triggers = {
+    function_name = aws_lambda_function.recsys_api.function_name
+    region        = var.aws_region
+  }
+
+  provisioner "local-exec" {
+    interpreter = ["powershell", "-Command"]
+    command     = "& 'C:\\Program Files\\Amazon\\AWSCLIV2\\aws.exe' lambda add-permission --function-name ${aws_lambda_function.recsys_api.function_name} --region ${var.aws_region} --statement-id UrlPolicyInvokeFunction --action lambda:InvokeFunction --principal '*' --invoked-via-function-url; exit 0"
+  }
+
+  provisioner "local-exec" {
+    when        = destroy
+    interpreter = ["powershell", "-Command"]
+    command     = "& 'C:\\Program Files\\Amazon\\AWSCLIV2\\aws.exe' lambda remove-permission --function-name ${self.triggers.function_name} --region ${self.triggers.region} --statement-id UrlPolicyInvokeFunction; exit 0"
+  }
+
+  depends_on = [aws_lambda_function_url.recsys_api]
 }
 
 output "function_url" {
