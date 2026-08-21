@@ -12,7 +12,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Query
 
 from recsys.models.base import Recommender
 
@@ -45,9 +45,14 @@ def _register_routes(app: FastAPI) -> None:
         return {"status": "ok"}
 
     @app.get("/recommend")
-    def recommend(user: int, k: int = 10) -> dict[str, Any]:
+    def recommend(user: int = Query(..., ge=0), k: int = Query(default=10, ge=0)) -> dict[str, Any]:
         """Retorna os top-k itens recomendados para ``user``."""
-        items = app.state.model.recommend(user, k)
+        try:
+            items = app.state.model.recommend(user, k)
+        except IndexError as exc:
+            raise HTTPException(
+                status_code=404, detail=f"user {user} fora do catálogo conhecido"
+            ) from exc
         return {"user": user, "k": k, "items": items}
 
 
