@@ -35,6 +35,12 @@ models/*.joblib
 .env.*
 !.env.example
 
+# Terraform (deploy/) — binários e estado local; o lock file É versionado.
+deploy/.terraform/
+deploy/*.tfstate
+deploy/*.tfstate.*
+deploy/.terraform.tfstate.lock.info
+
 # SO / editor
 .DS_Store
 Thumbs.db
