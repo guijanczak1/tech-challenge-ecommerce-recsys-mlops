@@ -1,5 +1,9 @@
 # syntax=docker/dockerfile:1
-# Imagem de serving da API de recomendação (FastAPI + Uvicorn).
+# Imagem de serving da API de recomendação (FastAPI + Uvicorn) para AWS Lambda.
+# Usa o aws-lambda-web-adapter: expõe a app HTTP normal como função Lambda sem
+# reescrever a API no formato de handler do Lambda. Free tier: 1M
+# requisições/mês + 400.000 GB-s de execução, para sempre (não expira em 12
+# meses, ao contrário do free tier "clássico" de EC2).
 
 FROM python:3.12-slim AS builder
 ENV PIP_NO_CACHE_DIR=1 POETRY_NO_INTERACTION=1 POETRY_VIRTUALENVS_IN_PROJECT=1
@@ -14,6 +18,14 @@ RUN poetry install --only main
 FROM python:3.12-slim AS runtime
 ENV PYTHONUNBUFFERED=1 PATH="/app/.venv/bin:$PATH"
 WORKDIR /app
+
+# Lambda Web Adapter: encaminha o invoke do Lambda para o Uvicorn na porta
+# 8080, igual a um servidor HTTP comum. Espera o /health responder antes de
+# liberar tráfego (evita erro no cold start enquanto o modelo carrega).
+COPY --from=public.ecr.aws/awslabs/lambda-web-adapter:0.8.1 /lambda-adapter /opt/extensions/lambda-adapter
+ENV PORT=8080
+ENV AWS_LWA_READINESS_CHECK_PATH=/health
+
 COPY --from=builder /app/.venv /app/.venv
 COPY --from=builder /app/src ./src
 COPY --from=builder /app/configs ./configs
