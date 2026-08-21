@@ -22,7 +22,7 @@ WORKDIR /app
 # Lambda Web Adapter: encaminha o invoke do Lambda para o Uvicorn na porta
 # 8080, igual a um servidor HTTP comum. Espera o /health responder antes de
 # liberar tráfego (evita erro no cold start enquanto o modelo carrega).
-COPY --from=public.ecr.aws/awslabs/lambda-web-adapter:0.8.1 /lambda-adapter /opt/extensions/lambda-adapter
+COPY --from=public.ecr.aws/awsguru/aws-lambda-adapter:1.0.1 /lambda-adapter /opt/extensions/lambda-adapter
 ENV PORT=8080
 ENV AWS_LWA_READINESS_CHECK_PATH=/health
 
