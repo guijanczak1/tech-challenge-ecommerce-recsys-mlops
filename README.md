@@ -1,6 +1,6 @@
 # tech-challenge-ecommerce-recsys-mlops
 
-Tech Challenge — Pós ML FIAP (Fase 02). Sistema de **recomendação de produtos
+Tech Challenge — Sistema de **recomendação de produtos
 de e-commerce**: rede neural PyTorch (embeddings + MLP), pipeline reprodutível
 com **DVC**, experimentos e Model Registry no **MLflow**, API de inferência em
 **FastAPI**, containerizado com **Docker** e **implantado na AWS (Lambda)**.
