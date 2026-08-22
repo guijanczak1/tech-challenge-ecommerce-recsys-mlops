@@ -14,6 +14,7 @@ from typing import Any
 
 from fastapi import FastAPI, HTTPException, Query
 
+from recsys.data.catalog import product_name
 from recsys.models.base import Recommender
 
 REGISTERED_MODEL = "recsys-mlp"
@@ -36,6 +37,11 @@ def default_provider() -> Recommender:
     return production_model()
 
 
+def _enrich(item_ids: list[int]) -> list[dict[str, Any]]:
+    """Combina cada item_id com nome/categoria fictícios (catálogo de demo)."""
+    return [{"id": item_id, **product_name(item_id)} for item_id in item_ids]
+
+
 def _register_routes(app: FastAPI) -> None:
     """Registra os endpoints ``/health`` e ``/recommend`` na app."""
 
@@ -46,14 +52,19 @@ def _register_routes(app: FastAPI) -> None:
 
     @app.get("/recommend")
     def recommend(user: int = Query(..., ge=0), k: int = Query(default=10, ge=0)) -> dict[str, Any]:
-        """Retorna os top-k itens recomendados para ``user``."""
+        """Retorna os top-k itens recomendados para ``user``.
+
+        ``name``/``category`` vêm de um catálogo **fictício** de demonstração
+        — o RetailRocket (dataset real sugerido) não expõe nomes de produto,
+        apenas IDs e propriedades hasheadas por anonimização.
+        """
         try:
-            items = app.state.model.recommend(user, k)
+            item_ids = app.state.model.recommend(user, k)
         except IndexError as exc:
             raise HTTPException(
                 status_code=404, detail=f"user {user} fora do catálogo conhecido"
             ) from exc
-        return {"user": user, "k": k, "items": items}
+        return {"user": user, "k": k, "items": _enrich(item_ids)}
 
 
 def create_app(provider: Callable[[], Recommender] = default_provider) -> FastAPI:
