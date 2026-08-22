@@ -23,7 +23,7 @@ def _seed_numpy(seed: int) -> None:
     """Fixa a semente do numpy se estiver instalado."""
     try:
         import numpy as np
-    except ImportError:
+    except ImportError:  # pragma: no cover — numpy é dependência obrigatória do projeto
         return
     np.random.seed(seed)
 
@@ -32,7 +32,7 @@ def _seed_torch(seed: int) -> None:
     """Fixa a semente do torch (CPU/GPU) se estiver instalado."""
     try:
         import torch
-    except ImportError:
+    except ImportError:  # pragma: no cover — torch é dependência obrigatória do projeto
         return
     torch.manual_seed(seed)
     if torch.cuda.is_available():

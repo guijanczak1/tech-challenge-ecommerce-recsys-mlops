@@ -67,5 +67,5 @@ def main() -> None:
     print(f"[feature_eng] treino={train_path} teste={test_path}")
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover — main() já é testado diretamente
     main()

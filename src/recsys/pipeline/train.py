@@ -110,5 +110,5 @@ def main() -> None:
     print(f"[train] MLP treinado e registrado como '{REGISTERED_MODEL}@staging'")
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover — main() já é testado diretamente
     main()

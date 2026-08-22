@@ -17,5 +17,5 @@ def main() -> None:
     print(f"[prepare] dataset pronto em {path}")
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover — main() já é testado diretamente
     main()
