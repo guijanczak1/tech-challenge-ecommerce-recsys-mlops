@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from fastapi.testclient import TestClient
 
+from recsys.data.catalog import product_name
 from recsys.serving.api import create_app
 
 
@@ -26,7 +27,10 @@ def test_recommend_returns_items() -> None:
         response = client.get("/recommend", params={"user": 7, "k": 3})
     body = response.json()
     assert response.status_code == 200
-    assert body == {"user": 7, "k": 3, "items": [0, 1, 2]}
+    assert body["user"] == 7
+    assert body["k"] == 3
+    expected = [{"id": i, **product_name(i)} for i in range(3)]
+    assert body["items"] == expected
 
 
 def test_recommend_requires_user() -> None:
@@ -59,3 +63,12 @@ def test_recommend_user_out_of_range_returns_404() -> None:
         response = client.get("/recommend", params={"user": 999999, "k": 5})
     assert response.status_code == 404
     assert "fora do catálogo" in response.json()["detail"]
+
+
+def test_recommend_items_are_enriched_with_name_and_category() -> None:
+    with TestClient(create_app(provider=_DummyModel)) as client:
+        response = client.get("/recommend", params={"user": 1, "k": 2})
+    items = response.json()["items"]
+    assert len(items) == 2
+    for item in items:
+        assert set(item) == {"id", "name", "category"}
