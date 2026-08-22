@@ -36,6 +36,13 @@ Comparação com baselines (valores da amostra sintética; variam com o dataset 
 > espera-se vantagem do modelo neural pela personalização. Reproduza com
 > `dvc repro` e inspecione no MLflow.
 
+## Serving (API)
+- `GET /recommend` retorna cada item como `{id, name, category}`. **`name` e
+  `category` vêm de um catálogo fictício de demonstração**
+  (`src/recsys/data/catalog.py`), determinístico por `item_id` — o
+  RetailRocket (dataset real) não expõe nomes de produto, apenas IDs e
+  propriedades hasheadas por anonimização. Não representam produtos reais.
+
 ## Uso pretendido
 - Gerar listas de recomendação por usuário em contexto de e-commerce.
 - **Não** indicado para decisões sensíveis (crédito, etc.) nem como única fonte
