@@ -5,6 +5,7 @@ from __future__ import annotations
 from fastapi.testclient import TestClient
 
 from recsys.data.catalog import product_name
+from recsys.serving import api as api_module
 from recsys.serving.api import create_app
 
 
@@ -72,3 +73,31 @@ def test_recommend_items_are_enriched_with_name_and_category() -> None:
     assert len(items) == 2
     for item in items:
         assert set(item) == {"id", "name", "category"}
+
+
+def test_production_model_loads_from_mlflow_registry(monkeypatch) -> None:
+    calls: dict[str, str] = {}
+
+    def fake_load_model(uri: str) -> str:
+        calls["uri"] = uri
+        return "dummy-from-registry"
+
+    monkeypatch.setattr("mlflow.pytorch.load_model", fake_load_model)
+    assert api_module.production_model() == "dummy-from-registry"
+    assert calls["uri"] == f"models:/{api_module.REGISTERED_MODEL}@production"
+
+
+def test_default_provider_uses_embedded_model_when_present(tmp_path, monkeypatch) -> None:
+    embedded = tmp_path / "mlp.pt"
+    embedded.write_text("checkpoint fake")
+    monkeypatch.setattr(api_module, "_LOCAL_MODEL_PATH", embedded)
+    monkeypatch.setattr("recsys.serving.loader.load_local_model", lambda: "local-dummy")
+    assert api_module.default_provider() == "local-dummy"
+
+
+def test_default_provider_falls_back_to_registry_when_no_embedded_model(
+    tmp_path, monkeypatch
+) -> None:
+    monkeypatch.setattr(api_module, "_LOCAL_MODEL_PATH", tmp_path / "nao-existe.pt")
+    monkeypatch.setattr(api_module, "production_model", lambda: "prod-dummy")
+    assert api_module.default_provider() == "prod-dummy"

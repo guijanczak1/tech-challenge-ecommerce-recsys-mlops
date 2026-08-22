@@ -54,6 +54,7 @@ def test_precision_at_k() -> None:
     relevant = {20, 40, 99}
     assert precision_at_k(recommended, relevant, k=4) == 0.5  # 2 de 4
     assert precision_at_k(recommended, relevant, k=0) == 0.0
+    assert precision_at_k([], relevant, k=4) == 0.0  # sem recomendações
 
 
 def test_recall_at_k() -> None:

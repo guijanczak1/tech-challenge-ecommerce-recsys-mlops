@@ -4,7 +4,11 @@ from __future__ import annotations
 
 import pandas as pd
 
-from recsys.pipeline.evaluate import evaluate_recommender, per_user_relevant
+from recsys.pipeline.evaluate import (
+    evaluate_recommender,
+    per_user_relevant,
+    promote_if_qualified,
+)
 
 
 class _StubModel:
@@ -30,3 +34,9 @@ def test_evaluate_recommender_empty_is_zero() -> None:
     metrics = evaluate_recommender(_StubModel(), {}, k=3)
     assert set(metrics) == {"precision_at_k", "recall_at_k", "ndcg_at_k", "map_at_k"}
     assert all(value == 0.0 for value in metrics.values())
+
+
+def test_promote_if_qualified_below_threshold_does_not_touch_mlflow() -> None:
+    results = {"mlp": {"ndcg_at_k": 0.05}}
+    # min_ndcg > score: retorna False sem sequer instanciar o MlflowClient.
+    assert promote_if_qualified(results, min_ndcg=0.1) is False

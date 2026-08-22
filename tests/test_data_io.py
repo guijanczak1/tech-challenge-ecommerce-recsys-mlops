@@ -62,3 +62,11 @@ def test_ensure_events_keeps_existing_real_file(tmp_path: Path) -> None:
 def test_load_events_missing_raises(tmp_path: Path) -> None:
     with pytest.raises(FileNotFoundError):
         load_events(_cfg(tmp_path))
+
+
+def test_load_events_returns_dataframe_when_present(tmp_path: Path) -> None:
+    cfg = _cfg(tmp_path)
+    ensure_events(cfg, seed=42)
+    df = load_events(cfg)
+    assert len(df) == 500
+    assert set(df.columns) == _EXPECTED_COLS
