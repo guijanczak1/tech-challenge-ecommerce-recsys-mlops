@@ -11,7 +11,7 @@ Código em clean code (SOLID, Factory/Strategy/Template Method).
 | | |
 |---|---|
 | Repositório (Etapas 1–4 do enunciado) | ✅ completo |
-| Testes | **61 passando**, cobertura **83%** |
+| Testes | **77 passando**, cobertura **100%** (piso mínimo: 92%) |
 | Modelo | `recsys-mlp` v3 — **Production** no MLflow Registry |
 | Deploy (bônus) | ✅ **ao vivo** na AWS Lambda — ver [Deploy em produção](#deploy-em-produção-aws) |
 | Vídeo STAR (5 min) | pendente |
@@ -58,7 +58,7 @@ src/recsys/
   utils/
     seed.py · device.py       # reprodutibilidade + device-agnostic
 
-tests/                     # espelha src/recsys — 61 testes
+tests/                     # espelha src/recsys — 77 testes, cobertura 100%
 configs/params.yaml        # hiperparâmetros, seeds, thresholds
 deploy/                    # Terraform: ECR + Lambda + Function URL
 docs/model_card.md         # performance, limitações e vieses do modelo
@@ -157,7 +157,7 @@ tempos (`aws ecr batch-delete-image`).
 ## Qualidade
 
 ```bash
-poetry run pytest -q                                          # 61 testes, cobertura >=80%
+poetry run pytest -q                                          # 77 testes, cobertura >=92% (piso do CI)
 poetry run ruff check . && poetry run ruff format --check .   # lint + formato
 ```
 
