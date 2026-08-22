@@ -13,8 +13,7 @@ Código em clean code (SOLID, Factory/Strategy/Template Method).
 | Repositório (Etapas 1–4 do enunciado) | ✅ completo |
 | Testes | **77 passando**, cobertura **100%** (piso mínimo: 92%) |
 | Modelo | `recsys-mlp` v3 — **Production** no MLflow Registry |
-| Deploy (bônus) | ✅ **ao vivo** na AWS Lambda — ver [Deploy em produção](#deploy-em-produção-aws) |
-| Vídeo STAR (5 min) | pendente |
+| Deploy (bônus) | ✅ **ao vivo** na AWS Lambda — ver [Deploy em produção](#deploy-em-produção-aws) 
 
 ## Requisitos
 - **Python 3.12** · **Poetry** · (opcional) **Docker**
@@ -149,19 +148,9 @@ curl "https://kordlmw2h4cfpovpex3gghwica0uzrnl.lambda-url.sa-east-1.on.aws/healt
 curl "https://kordlmw2h4cfpovpex3gghwica0uzrnl.lambda-url.sa-east-1.on.aws/recommend?user=1&k=5"
 ```
 
-**Custo:** invocações Lambda ficam no free tier perpétuo. O armazenamento da
-imagem no ECR **não** é gratuito para sempre (só nos primeiros 12 meses de
-conta nova) — custa ~US$0,10/GB-mês; vale limpar digests antigos de tempos em
-tempos (`aws ecr batch-delete-image`).
-
 ## Qualidade
 
 ```bash
 poetry run pytest -q                                          # 77 testes, cobertura >=92% (piso do CI)
 poetry run ruff check . && poetry run ruff format --check .   # lint + formato
 ```
-
-## Entregas (enunciado)
-- ✅ Repositório GitHub (clean code, Poetry, Docker, DVC, MLflow).
-- ⏳ **Vídeo de 5 min (método STAR)** — pendente.
-- ✅ Bônus: deploy em nuvem — container acessível por URL pública (ver acima).
